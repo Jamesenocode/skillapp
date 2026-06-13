@@ -1540,7 +1540,6 @@ html {
         top: 70px;
         right: 20px;
         flex-direction: column;
-
         background: rgba(255,255,255,0.85);
         backdrop-filter: blur(20px);
         padding: 20px;
@@ -1548,17 +1547,10 @@ html {
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
 
-    #menu-toggle:checked + .hamburger + .nav-links {
+    /* THIS IS THE MOST IMPORTANT LINE */
+    #menu-toggle:checked ~ .nav-links {
         display: flex;
     }
-}
-body {
-    padding-top: 90px;
-}
-.startup-navbar .logo {
-    font-size: 22px;
-    font-weight: 900;
-    color: #06164b;
 }
 
 /* Register page navbar fix */
@@ -1637,117 +1629,4 @@ body {
     .two-columns {
         grid-template-columns: 1fr;
     }
-}
-/* MOBILE NAVBAR FIX */
-@media (max-width: 768px) {
-    .startup-navbar {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 15px 20px;
-        gap: 12px;
-    }
-
-    .startup-navbar nav {
-        flex-wrap: wrap;
-        gap: 10px;
-        width: 100%;
-    }
-
-    .startup-navbar .logo {
-        font-size: 18px;
-        white-space: normal;
-    }
-}
-/* HAMBURGER MENU FUNCTION */
-.hamburger {
-    display: none;
-    font-size: 26px;
-    cursor: pointer;
-}
-
-/* hide menu on mobile initially */
-#menu-toggle {
-    display: none;
-}
-
-@media (max-width: 768px) {
-    .hamburger {
-        display: block;
-    }
-
-    .startup-navbar nav {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-    }
-
-    #menu-toggle:checked + .hamburger + nav {
-        display: flex;
-    }
-}
-
-/* REGISTER PAGE FIX */
-@media (max-width: 768px) {
-    .auth-wrapper {
-        padding-top: 20px;
-    }
-
-    .auth-card {
-        margin-top: 20px;
-    }
-
-    .startup-navbar {
-        position: relative;
-    }
-}
-
-html, body {
-    margin: 0;
-    padding: 0;
-}
-body {
-    overflow-x: hidden;
-}
-
-
-@media (max-width: 768px) {
-    .startup-navbar {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        padding: 15px 20px;
-        gap: 10px;
-    }
-
-    .startup-navbar .logo {
-        width: 100%;
-        text-align: center;
-        font-size: 18px;
-    }
-
-    .startup-navbar nav {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 12px;
-    }
-}
-
-@media (max-width: 768px) {
-    .startup-navbar nav {
-        display: flex !important;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-}
-
-.auth-wrapper {
-    padding-top: 10px;
-}
-
-body.form-page {
-    margin: 0;
-    padding: 0;
 }
