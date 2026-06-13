@@ -28,12 +28,7 @@ SECRET_KEY = 'django-insecure-9r9$2*(i*s4+9#fgo5yh5z(4diu6im)0hqrbya3zzkfwm0gk0_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-     "skillapp-v7fj.onrender.com",
-    "localhost",
-    "127.0.0.1"
-]
-
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
