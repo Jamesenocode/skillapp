@@ -1211,3 +1211,39 @@ body {
         font-size: 32px;
     }
 }
+@media (max-width: 768px) {
+
+    .navbar,
+    .karo-navbar {
+        flex-direction: column;
+        padding: 15px 20px;
+        text-align: center;
+    }
+
+    .navbar nav,
+    .karo-navbar nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .nav-btn,
+    .main-btn {
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    .hero {
+        grid-template-columns: 1fr;
+        padding: 40px 20px;
+    }
+
+    .about-home {
+        grid-template-columns: 1fr;
+        padding: 30px 20px;
+    }
+
+    body {
+        overflow-x: hidden;
+    }
+}
