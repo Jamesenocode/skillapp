@@ -1638,3 +1638,65 @@ body {
         grid-template-columns: 1fr;
     }
 }
+/* MOBILE NAVBAR FIX */
+@media (max-width: 768px) {
+    .startup-navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px 20px;
+        gap: 12px;
+    }
+
+    .startup-navbar nav {
+        flex-wrap: wrap;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .startup-navbar .logo {
+        font-size: 18px;
+        white-space: normal;
+    }
+}
+/* HAMBURGER MENU FUNCTION */
+.hamburger {
+    display: none;
+    font-size: 26px;
+    cursor: pointer;
+}
+
+/* hide menu on mobile initially */
+#menu-toggle {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .hamburger {
+        display: block;
+    }
+
+    .startup-navbar nav {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    #menu-toggle:checked + .hamburger + nav {
+        display: flex;
+    }
+}
+
+/* REGISTER PAGE FIX */
+@media (max-width: 768px) {
+    .auth-wrapper {
+        padding-top: 20px;
+    }
+
+    .auth-card {
+        margin-top: 20px;
+    }
+
+    .startup-navbar {
+        position: relative;
+    }
+}
