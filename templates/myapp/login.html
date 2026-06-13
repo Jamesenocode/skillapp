@@ -1,0 +1,67 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | KARO</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body class="form-page">
+
+<header class="navbar">
+    <h2>KARO Skill Development</h2>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/about/">About</a>
+        <a href="/programs/">Programs</a>
+        <a href="/register/" class="nav-btn">Register</a>
+    </nav>
+</header>
+
+<main class="application-wrapper">
+    <section class="application-card">
+        <h1>Student Login</h1>
+        <p class="form-subtitle">Login to access your student dashboard.</p>
+
+        {% if error %}
+            <div class="status-box rejected">
+                <h3>{{ error }}</h3>
+            </div>
+        {% endif %}
+
+        {% if messages %}
+            {% for message in messages %}
+                {% if "error" in message.tags or "warning" in message.tags or "info" in message.tags %}
+                    <div class="status-box pending">
+                        <h3>{{ message }}</h3>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" class="application-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" name="email" id="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" required>
+            </div>
+
+            <div class="form-actions">
+                <a href="/" class="cancel-btn">Cancel</a>
+                <button type="submit" class="submit-btn">Login</button>
+            </div>
+        </form>
+    </section>
+</main>
+
+</body>
+</html>

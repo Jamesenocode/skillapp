@@ -1,0 +1,63 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Karo's Skill Development</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body>
+
+<header class="navbar">
+    <h2>Karo's Skill Development</h2>
+
+    <nav>
+    <a href="/">Home</a>
+    <a href="/about/">About</a>
+    <a href="/#programs">Programs</a>
+    <a href="/apply/" class="nav-btn">Apply</a>
+
+    {% if request.user.is_authenticated %}
+        {% if request.user.is_staff %}
+            <a href="/admin/">Admin Panel</a>
+        {% else %}
+            <a href="/student-dashboard/">Dashboard</a>
+            <a href="/check-status/">Check Status</a>
+        {% endif %}
+
+        <a href="/logout/">Logout</a>
+    {% else %}
+        <a href="/login/">Login</a>
+    {% endif %}
+</nav>
+</header>
+
+<section class="hero">
+    <div class="hero-text">
+        <p class="tagline">About the program</p>
+        <h1>Building practical skills for a better future</h1>
+        <p>
+            Karo's Skill Development Program is focused on helping students and young people
+            gain practical vocational skills that can improve their career opportunities,
+            support self-employment, and prepare them for real-world work.
+        </p>
+    </div>
+
+    <div class="hero-box">
+        <h3>Our Focus</h3>
+        <p>Practical training</p>
+        <p>Career development</p>
+        <p>Vocational empowerment</p>
+        <p>Hands-on learning</p>
+    </div>
+</section>
+
+<section class="contact">
+    <h2>Program Venue</h2>
+    <p>No. 3 Onitsha Street, Oramudhe Community, Ozoro, Isoko North, Delta State.</p>
+</section>
+
+</body>
+</html>

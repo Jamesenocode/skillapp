@@ -1,0 +1,52 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programs | KARO Skill Development</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body>
+
+<header class="navbar">
+    <h2>KARO Skill Development</h2>
+
+    <nav>
+    <a href="/">Home</a>
+    <a href="/about/">About</a>
+    <a href="/programs/">Programs</a>
+    <a href="/apply/" class="nav-btn">Apply</a>
+
+    {% if request.user.is_authenticated %}
+        {% if request.user.is_staff %}
+            <a href="/admin/">Admin Panel</a>
+        {% else %}
+            <a href="/student-dashboard/">Dashboard</a>
+            <a href="/check-status/">Check Status</a>
+        {% endif %}
+
+        <a href="/logout/">Logout</a>
+    {% else %}
+        <a href="/login/">Login</a>
+    {% endif %}
+</nav>
+</header>
+
+<section class="programs">
+    <h2>Available Training Programs</h2>
+
+    <div class="program-grid">
+        {% for program in programs %}
+            <div class="program-card">
+                <h3>{{ program.name }}</h3>
+                <p>{{ program.description }}</p>
+                <p><strong>Duration:</strong> {{ program.duration }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+</body>
+</html>

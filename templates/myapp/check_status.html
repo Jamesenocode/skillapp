@@ -1,0 +1,66 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Application Status | KARO</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body class="form-page">
+
+<header class="navbar">
+    <h2>KARO Skill Development</h2>
+
+    <nav>
+    <a href="/student-dashboard/">Dashboard</a>
+    <a href="/check-status/" class="nav-btn">Check Status</a>
+    <a href="/logout/">Logout</a>
+</nav>
+</header>
+
+<main class="application-wrapper">
+    <section class="application-card">
+        <h1>Check Application Status</h1>
+        <p class="form-subtitle">Enter the phone number used during application.</p>
+
+        <form method="POST" class="application-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="phone_number">Phone Number</label>
+                <input type="text" name="phone_number" id="phone_number" placeholder="e.g. 08067642257" required>
+            </div>
+
+            <div class="form-actions">
+                <a href="/" class="cancel-btn">Cancel</a>
+                <button type="submit" class="submit-btn">Check Status</button>
+            </div>
+        </form>
+
+        {% if message %}
+            <div class="status-box rejected">
+                <h3>{{ message }}</h3>
+            </div>
+        {% endif %}
+
+        {% if application %}
+    <div class="status-box {{ application.status|lower }}">
+        <h3>{{ application.status }}</h3>
+        <p><strong>Name:</strong> {{ application.surname }} {{ application.first_name }}</p>
+        <p><strong>Program:</strong> {{ application.program }}</p>
+        <p><strong>Duration:</strong> {{ application.duration }}</p>
+
+        {% if application.admin_message %}
+            <p><strong>Message:</strong> {{ application.admin_message }}</p>
+        {% endif %}
+
+        <p><strong>Submitted:</strong> {{ application.application_date }}</p>
+    </div>
+    {% endif %}
+    </section>
+</main>
+
+</body>
+</html>

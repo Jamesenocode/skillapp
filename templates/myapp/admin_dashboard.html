@@ -1,0 +1,128 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | KARO</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body class="admin-page">
+
+<header class="admin-topbar">
+    <div>
+        <h2>KARO Admin</h2>
+        <p>Skill Development Programme</p>
+    </div>
+
+    <nav>
+        <a href="/admin-dashboard/">Dashboard</a>
+        <a href="/admin-applications/">Applications</a>
+        <a href="/">Website</a>
+        <a href="/logout/" class="admin-logout">Logout</a>
+    </nav>
+</header>
+
+<main class="admin-layout">
+    <section class="admin-hero">
+        <div>
+            <p class="tagline">Admin overview</p>
+            <h1>Application Management</h1>
+            <p>Review admissions, monitor student applications, and manage programme decisions.</p>
+        </div>
+
+        <a href="/admin-applications/" class="submit-btn admin-hero-btn">View Applications</a>
+    </section>
+
+    <section class="stats-grid">
+        <div class="stat-card">
+            <span>Total</span>
+            <strong>{{ total_applications }}</strong>
+        </div>
+
+        <div class="stat-card pending">
+            <span>Pending</span>
+            <strong>{{ pending_applications }}</strong>
+        </div>
+
+        <div class="stat-card approved">
+            <span>Approved</span>
+            <strong>{{ approved_applications }}</strong>
+        </div>
+
+        <div class="stat-card rejected">
+            <span>Rejected</span>
+            <strong>{{ rejected_applications }}</strong>
+        </div>
+    </section>
+
+    <section class="admin-panel">
+        <div class="panel-heading">
+            <h2>Recent Applications</h2>
+            <a href="/admin-applications/">View all</a>
+        </div>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Program</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for application in recent_applications %}
+                        <tr>
+                            <td>{{ application.surname }} {{ application.first_name }}</td>
+                            <td>{{ application.program }}</td>
+                            <td>{{ application.phone_number }}</td>
+                            <td><span class="status-pill {{ application.status|lower }}">{{ application.status }}</span></td>
+                            <td>{{ application.application_date|date:"M d, Y" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">No applications yet.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="admin-panel">
+        <div class="panel-heading">
+            <h2>Program Statistics</h2>
+        </div>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Program</th>
+                        <th>Total Applications</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in program_statistics %}
+                        <tr>
+                            <td>{{ item.program }}</td>
+                            <td>{{ item.total }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="2">No program data yet.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

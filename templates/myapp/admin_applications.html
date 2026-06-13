@@ -1,0 +1,135 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applications | KARO Admin</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body class="admin-page">
+
+<header class="admin-topbar">
+    <div>
+        <h2>KARO Admin</h2>
+        <p>Applications</p>
+    </div>
+
+    <nav>
+        <a href="/admin-dashboard/">Dashboard</a>
+        <a href="/admin-applications/">Applications</a>
+        <a href="/">Website</a>
+        <a href="/logout/" class="admin-logout">Logout</a>
+    </nav>
+</header>
+
+<main class="admin-layout">
+    <section class="admin-panel">
+        <div class="panel-heading">
+            <h2>All Applications</h2>
+            <div>
+                <a href="/admin-export-excel/" class="table-action" style="margin-right: 15px;">Export Excel</a>
+                <a href="/admin-dashboard/">Back to dashboard</a>
+            </div>
+        </div>
+
+        {% if messages %}
+            <div class="messages-container" style="margin-bottom: 20px;">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}" style="padding: 12px 20px; border-radius: 6px; background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; font-weight: 500;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="GET" class="admin-filter-form">
+            <input
+                type="text"
+                name="search"
+                value="{{ search_query }}"
+                placeholder="Search name or phone number"
+            >
+
+            <select name="status">
+                <option value="">All Statuses</option>
+                {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <select name="program">
+                <option value="">All Programs</option>
+                {% for value, label in program_choices %}
+                    <option value="{{ value }}" {% if program_filter == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="submit-btn">Filter</button>
+            <a href="/admin-applications/" class="cancel-btn">Reset</a>
+        </form>
+
+        <div class="admin-table-wrap">
+            <form method="POST" action="/admin-bulk-action/">
+                {% csrf_token %}
+
+                <div class="bulk-actions" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
+                    <select name="bulk_action" required>
+                        <option value="">Bulk action</option>
+                        <option value="Approved">Approve selected</option>
+                        <option value="Rejected">Reject selected</option>
+                        <option value="Pending">Mark pending</option>
+                        <option value="Delete" style="color: #dc2626; font-weight: bold;">Delete selected</option>
+                    </select>
+                    <button type="submit" class="submit-btn">Apply</button>
+                </div>
+
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>Name</th>
+                            <th>Program</th>
+                            <th>Phone</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Submitted</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for application in applications %}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="application_ids" value="{{ application.id }}">
+                                </td>
+                                <td>{{ application.surname }} {{ application.first_name }}</td>
+                                <td>{{ application.program }}</td>
+                                <td>{{ application.phone_number }}</td>
+                                <td>{{ application.category }}</td>
+                                <td><span class="status-pill {{ application.status|lower }}">{{ application.status }}</span></td>
+                                <td>{{ application.application_date|date:"M d, Y" }}</td>
+                                <td>
+                                    <a href="{% url 'admin_application_detail' application.id %}" class="table-action">Review</a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="8">No applications have been submitted yet.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | KARO</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body class="form-page">
+
+<header class="navbar">
+    <h2>KARO Student Dashboard</h2>
+
+   <nav>
+    <a href="/student-dashboard/">Dashboard</a>
+    <a href="/check-status/">Check Status</a>
+    <a href="/logout/" class="nav-btn">Logout</a>
+</nav>
+</header>
+
+<main class="application-wrapper">
+    <section class="application-card">
+        <h1>Welcome, {{ request.user.first_name|default:request.user.email }}</h1>
+        <p class="form-subtitle">Manage your KARO training application from here.</p>
+
+        {% if application %}
+            {% if application.status == "Approved" %}
+                <div class="congrats-card">
+                    <div class="congrats-icon">✓</div>
+                    <h2>Congratulations!</h2>
+                    <p>Your application has been approved for {{ application.program }}.</p>
+
+                    {% if application.admin_message %}
+                        <p><strong>Message:</strong> {{ application.admin_message }}</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <div class="status-box {{ application.status|lower }}">
+                <h3>{{ application.status }}</h3>
+                <p><strong>Program:</strong> {{ application.program }}</p>
+                <p><strong>Duration:</strong> {{ application.duration }}</p>
+                <p><strong>Submitted:</strong> {{ application.application_date }}</p>
+
+                {% if application.admin_message %}
+                    <p><strong>Admin Message:</strong> {{ application.admin_message }}</p>
+                {% endif %}
+                <p>You have already submitted an application. You cannot submit another application at this time.</p>
+            </div>
+        {% else %}
+            <div class="status-box pending">
+                <h3>No Application Yet</h3>
+                <p>You have not submitted a training application yet.</p>
+            </div>
+        {% endif %}
+
+        <div class="why-grid dashboard-actions">
+            <a href="/apply/" class="program-card">Submit Application</a>
+            <a href="/check-status/" class="program-card">Check Application Status</a>
+            <a href="/programs/" class="program-card">View Programs</a>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

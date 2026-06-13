@@ -1,0 +1,78 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KARO Skill Development Program</title>
+    <link rel="stylesheet" href="{% static 'myapp/css/home.css' %}">
+</head>
+<body>
+
+<header class="navbar">
+    <h2>KARO Skill Development</h2>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="#programs">Programs</a>
+        <a href="#contact" class="btn-small">Contact</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <div class="hero-text">
+        <p class="tagline">Empowering through vocational trades</p>
+        <h1>KARO'S Skill Development Program</h1>
+        <p>
+            Acquire practical skills for a better future. Join hands-on training in ICT,
+            plumbing, electrical electronics, solar installation, and aluminium works.
+        </p>
+
+        <a href="#" class="btn-main">Register Now</a>
+    </div>
+
+    <div class="hero-image">
+        <img src="{% static 'myapp/images/karo-flyer.png' %}" alt="KARO Skill Development flyer">
+    </div>
+</section>
+
+<section class="details">
+    <div>
+        <h3>Start Date</h3>
+        <p>5th June, 2026</p>
+    </div>
+
+    <div>
+        <h3>End Date</h3>
+        <p>15th June, 2026</p>
+    </div>
+
+    <div>
+        <h3>Time</h3>
+        <p>9:00 AM - 4:00 PM Daily</p>
+    </div>
+</section>
+
+<section class="programs" id="programs">
+    <h2>Training Areas</h2>
+
+    <div class="program-grid">
+        {% for program in programs %}
+            <div class="program-card">
+                <h3>{{ program }}</h3>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="contact" id="contact">
+    <h2>Contact & Venue</h2>
+    <p>No. 3 Onitsha Street, Oramudhe Community, Ozoro, Isoko North, Delta State.</p>
+    <h3>+234 803 772 5361</h3>
+    <h3>08067642257</h3>
+</section>
+
+</body>
+</html>

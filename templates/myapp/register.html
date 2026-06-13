@@ -1,0 +1,91 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Student Account | KARO</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body class="form-page">
+
+<header class="navbar">
+    <h2>KARO Skill Development</h2>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/about/">About</a>
+        <a href="/programs/">Programs</a>
+        <a href="/login/">Login</a>
+        <a href="/register/" class="nav-btn">Register</a>
+    </nav>
+</header>
+
+<main class="auth-wrapper">
+    <section class="auth-card">
+        <div class="auth-heading">
+            <p class="tagline">Student portal</p>
+            <h1>Create Student Account</h1>
+            <p>Use your email and password to access your dashboard.</p>
+        </div>
+
+        <form method="POST" class="application-form">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="status-box rejected">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="form-grid two-columns">
+                <div class="form-group">
+                    <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                    {{ form.first_name }}
+                    {{ form.first_name.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                    {{ form.last_name }}
+                    {{ form.last_name.errors }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">Email Address</label>
+                {{ form.email }}
+                {{ form.email.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.phone_number.id_for_label }}">Phone Number</label>
+                {{ form.phone_number }}
+                {{ form.phone_number.errors }}
+            </div>
+
+            <div class="form-grid two-columns">
+                <div class="form-group">
+                    <label for="{{ form.password.id_for_label }}">Password</label>
+                    {{ form.password }}
+                    {{ form.password.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.confirm_password.id_for_label }}">Confirm Password</label>
+                    {{ form.confirm_password }}
+                    {{ form.confirm_password.errors }}
+                </div>
+            </div>
+
+            <div class="auth-actions">
+                <button type="submit" class="submit-btn">Create Account</button>
+                <a href="/login/" class="auth-link">Already have an account? Login</a>
+            </div>
+        </form>
+    </section>
+</main>
+
+</body>
+</html>
