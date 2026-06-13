@@ -1700,3 +1700,54 @@ body {
         position: relative;
     }
 }
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+body {
+    overflow-x: hidden;
+}
+
+
+@media (max-width: 768px) {
+    .startup-navbar {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 15px 20px;
+        gap: 10px;
+    }
+
+    .startup-navbar .logo {
+        width: 100%;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .startup-navbar nav {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .startup-navbar nav {
+        display: flex !important;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+.auth-wrapper {
+    padding-top: 10px;
+}
+
+body.form-page {
+    margin: 0;
+    padding: 0;
+}
