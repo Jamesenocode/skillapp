@@ -1,3 +1,6 @@
+import uuid
+import requests
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
@@ -7,8 +10,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q, Count
 from openpyxl import Workbook
-
-from .models import TrainingApplication, AdminActivityLog
+from .models import TrainingApplication, AdminActivityLog, Payment
 from .forms import TrainingApplicationForm, StudentRegistrationForm
 
 # Helper function to check if a user is staff
@@ -177,8 +179,18 @@ def student_dashboard(request):
         student=request.user
     ).order_by("-application_date").first()
 
+    successful_payment = None
+
+    if application:
+        successful_payment = Payment.objects.filter(
+            application=application,
+            student=request.user,
+            status="Success"
+        ).first()
+
     return render(request, "myapp/student_dashboard.html", {
         "application": application,
+        "successful_payment": successful_payment,
     })
 
 @login_required
@@ -214,7 +226,157 @@ def apply(request):
 
 def application_success(request):
     return render(request, "myapp/application_success.html")
+@login_required
+def initialize_payment(request, application_id):
+    application = get_object_or_404(
+        TrainingApplication,
+        id=application_id,
+        student=request.user,
+        status="Approved"
+    )
 
+    successful_payment = Payment.objects.filter(
+        application=application,
+        student=request.user,
+        status="Success"
+    ).first()
+
+    if successful_payment:
+        return redirect("payment_receipt", payment_id=successful_payment.id)
+
+    reference = f"KARO-{uuid.uuid4().hex[:12].upper()}"
+
+    payment = Payment.objects.create(
+        student=request.user,
+        application=application,
+        amount=settings.PAYMENT_AMOUNT,
+        reference=reference,
+    )
+
+    callback_url = request.build_absolute_uri("/payment/verify/")
+
+    payload = {
+        "email": request.user.email,
+        "amount": settings.PAYMENT_AMOUNT * 100,
+        "reference": reference,
+        "callback_url": callback_url,
+    }
+
+    headers = {
+        "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    try:
+        response = requests.post(
+            "https://api.paystack.co/transaction/initialize",
+            json=payload,
+            headers=headers,
+            timeout=30,
+        )
+
+        result = response.json()
+
+        if result.get("status"):
+            return redirect(result["data"]["authorization_url"])
+
+        payment.status = "Failed"
+        payment.gateway_response = result.get("message", "Payment initialization failed")
+        payment.save()
+
+    except requests.RequestException:
+        payment.status = "Failed"
+        payment.gateway_response = "Unable to connect to payment gateway"
+        payment.save()
+
+    messages.error(request, "Payment could not be started. Please try again.")
+    return redirect("student_dashboard")
+
+
+@login_required
+def verify_payment(request):
+    reference = request.GET.get("reference")
+
+    payment = get_object_or_404(
+        Payment,
+        reference=reference,
+        student=request.user
+    )
+
+    headers = {
+        "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
+    }
+
+    try:
+        response = requests.get(
+            f"https://api.paystack.co/transaction/verify/{reference}",
+            headers=headers,
+            timeout=30,
+        )
+
+        result = response.json()
+        data = result.get("data", {})
+
+        expected_amount = payment.amount * 100
+        returned_amount = data.get("amount")
+
+        if (
+            result.get("status")
+            and data.get("status") == "success"
+            and returned_amount == expected_amount
+        ):
+            payment.status = "Success"
+            payment.gateway_response = data.get("gateway_response", "Successful")
+            payment.paid_at = timezone.now()
+        else:
+            payment.status = "Failed"
+            payment.gateway_response = data.get("gateway_response", "Payment failed")
+
+        payment.save()
+
+    except requests.RequestException:
+        payment.status = "Failed"
+        payment.gateway_response = "Unable to verify payment"
+        payment.save()
+
+    return redirect("payment_receipt", payment_id=payment.id)
+
+
+@login_required
+def payment_receipt(request, payment_id):
+    payment = get_object_or_404(
+        Payment,
+        id=payment_id,
+        student=request.user
+    )
+
+    return render(request, "myapp/payment_receipt.html", {
+        "payment": payment,
+    })
+
+
+@login_required
+def payment_history(request):
+    payments = Payment.objects.filter(
+        student=request.user
+    ).order_by("-created_at")
+
+    return render(request, "myapp/payment_history.html", {
+        "payments": payments,
+    })
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_payments(request):
+    payments = Payment.objects.select_related(
+        "student",
+        "application"
+    ).order_by("-created_at")
+
+    return render(request, "myapp/admin_payments.html", {
+        "payments": payments,
+    })
 
 # --- Admin Views ---
 

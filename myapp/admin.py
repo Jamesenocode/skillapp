@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import TrainingApplication, AdminActivityLog
+from .models import TrainingApplication, AdminActivityLog, Payment
 
+admin.site.register(Payment)
 # Register the log model here since it doesn't have a decorator
 admin.site.register(AdminActivityLog)
 

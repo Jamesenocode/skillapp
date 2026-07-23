@@ -61,7 +61,28 @@ class TrainingApplication(models.Model):
     def __str__(self):
         return f"{self.surname} {self.first_name} - {self.program}"
 
+class Payment(models.Model):
+    STATUS_CHOICES = [
+        ("Pending", "Pending"),
+        ("Success", "Success"),
+        ("Failed", "Failed"),
+    ]
 
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    application = models.ForeignKey(TrainingApplication, on_delete=models.CASCADE)
+    amount = models.PositiveIntegerField()
+    reference = models.CharField(max_length=100, unique=True)
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="Pending"
+    )
+    gateway_response = models.CharField(max_length=255, blank=True)
+    paid_at = models.DateTimeField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.student.email} - {self.reference} - {self.status}"
 class AdminActivityLog(models.Model):
     application = models.ForeignKey(
         TrainingApplication,

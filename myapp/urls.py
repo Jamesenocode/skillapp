@@ -17,4 +17,9 @@ path('admin-applications/', views.admin_applications, name='admin_applications')
 path('admin-applications/<int:application_id>/', views.admin_application_detail, name='admin_application_detail'),
 path('admin-export-excel/', views.admin_export_excel, name='admin_export_excel'),
 path('admin-bulk-action/', views.admin_bulk_action, name='admin_bulk_action'),
+path("payment/pay/<int:application_id>/", views.initialize_payment, name="initialize_payment"),
+path("payment/verify/", views.verify_payment, name="verify_payment"),
+path("payment/receipt/<int:payment_id>/", views.payment_receipt, name="payment_receipt"),
+path("payment-history/", views.payment_history, name="payment_history"),
+path("admin-payments/", views.admin_payments, name="admin_payments"),
 ]

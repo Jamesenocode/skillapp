@@ -1630,3 +1630,132 @@ html {
         grid-template-columns: 1fr;
     }
 }
+
+
+
+
+/* just trying this out
+/* Landing page mobile hamburger final override */
+.startup-navbar .menu-toggle {
+    display: none !important;
+}
+
+.startup-navbar .hamburger {
+    display: none;
+    font-size: 30px;
+    color: #06164b;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+@media (max-width: 768px) {
+    .startup-navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        padding: 16px 22px;
+    }
+
+    .startup-navbar .logo {
+        max-width: 230px;
+        font-size: 17px;
+        line-height: 1.25;
+    }
+
+    .startup-navbar .hamburger {
+        display: block !important;
+    }
+
+    .startup-navbar .nav-links {
+        display: none !important;
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 18px 0 6px;
+        margin-top: 14px;
+        border-top: 1px solid #e5e7eb;
+        background: #ffffff;
+    }
+
+    .startup-navbar .menu-toggle:checked ~ .nav-links {
+        display: flex !important;
+    }
+
+    .startup-navbar .nav-links a {
+        width: 100%;
+        padding: 10px 0;
+    }
+}
+
+
+
+/* another css trial Compact landing page mobile hamburger menu */
+@media (max-width: 768px) {
+    .startup-navbar {
+        position: sticky;
+        top: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        padding: 14px 18px;
+    }
+
+    .startup-navbar .logo {
+        max-width: 230px;
+        font-size: 16px;
+        line-height: 1.25;
+    }
+
+    .startup-navbar .hamburger {
+        display: block !important;
+        margin-left: auto;
+        font-size: 28px;
+        line-height: 1;
+        color: #06164b;
+        cursor: pointer;
+    }
+
+    .startup-navbar .nav-links {
+        display: none !important;
+        position: absolute;
+        top: 62px;
+        right: 14px;
+        width: min(230px, calc(100vw - 28px));
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 10px;
+        margin: 0;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        box-shadow: 0 16px 35px rgba(15, 41, 74, 0.16);
+        z-index: 2000;
+    }
+
+    .startup-navbar .menu-toggle:checked ~ .nav-links {
+        display: flex !important;
+    }
+
+    .startup-navbar .nav-links a {
+        width: 100%;
+        padding: 11px 12px;
+        border-radius: 8px;
+        color: #06164b;
+        text-decoration: none;
+    }
+
+    .startup-navbar .nav-links a:hover {
+        background: #f4f6f9;
+    }
+
+    .startup-navbar .nav-links .nav-btn {
+        margin-top: 6px;
+        text-align: center;
+        background: #e52323;
+        color: #ffffff !important;
+    }
+}

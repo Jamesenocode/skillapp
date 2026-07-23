@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Receipt | KARO</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}?v=50">
+</head>
+<body class="form-page">
+
+<main class="application-wrapper">
+    <section class="application-card success-card">
+        <h1>Payment Receipt</h1>
+
+        <div class="status-box {% if payment.status == 'Success' %}approved{% else %}rejected{% endif %}">
+            <h3>{{ payment.status }}</h3>
+            <p><strong>Reference:</strong> {{ payment.reference }}</p>
+            <p><strong>Amount:</strong> ₦{{ payment.amount }}</p>
+            <p><strong>Program:</strong> {{ payment.application.program }}</p>
+            <p><strong>Response:</strong> {{ payment.gateway_response }}</p>
+            <p><strong>Date:</strong> {{ payment.paid_at|default:payment.created_at }}</p>
+        </div>
+
+        <div class="success-actions single-action">
+            <a href="/student-dashboard/" class="submit-btn">Go to Dashboard</a>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>
