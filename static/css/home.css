@@ -1791,3 +1791,8 @@ html {
         padding: 10px;
     }
 }
+
+/* trial for apply nav bar*/
+body {
+    background: red !important;
+}
