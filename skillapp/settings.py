@@ -154,3 +154,7 @@ TRAINING_FEES = {
     "6 months": 70000,
     "1 year": 100000,
 }
+
+
+ADMIN_USERNAME = config("ADMIN_USERNAME", default="")
+ADMIN_PASSWORD = config("ADMIN_PASSWORD", default="")
