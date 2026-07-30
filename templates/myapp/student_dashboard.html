@@ -5,15 +5,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard | KARO</title>
+    <title>Student Dashboard | Karo's Skill Development Programme</title>
     <link rel="stylesheet" href="{% static 'css/home.css' %}?v=50">
 </head>
+
 <body class="form-page">
 
-<header class="navbar">
-    <h2>KARO Student Dashboard</h2>
+<header class="startup-navbar">
+    <div class="logo">
+        Karo's Student Dashboard
+    </div>
 
-    <nav>
+    <input type="checkbox" id="menu-toggle" class="menu-toggle">
+
+    <label for="menu-toggle" class="hamburger">
+        ☰
+    </label>
+
+    <nav class="nav-links">
         <a href="/student-dashboard/">Dashboard</a>
         <a href="/check-status/">Check Status</a>
         <a href="/payment-history/">Payment History</a>
@@ -22,64 +31,139 @@
 </header>
 
 <main class="application-wrapper">
-    <section class="application-card">
-        <h1>Welcome, {{ request.user.first_name|default:request.user.email }}</h1>
-        <p class="form-subtitle">Manage your KARO training application from here.</p>
 
-        {% if application %}
-            {% if application.status == "Approved" %}
-                <div class="congrats-card">
-                    <div class="congrats-icon">✓</div>
-                    <h2>Congratulations!</h2>
-                    <p>Your application has been approved for {{ application.program }}.</p>
+<section class="application-card">
 
-                    {% if application.admin_message %}
-                        <p><strong>Message:</strong> {{ application.admin_message }}</p>
-                    {% endif %}
-                </div>
-            {% endif %}
+<h1>Welcome back, {{ request.user.first_name|default:request.user.email }} 👋</h1>
 
-            <div class="status-box {{ application.status|lower }}">
-                <h3>{{ application.status }}</h3>
-                <p><strong>Program:</strong> {{ application.program }}</p>
-                <p><strong>Duration:</strong> {{ application.duration }}</p>
-                <p><strong>Submitted:</strong> {{ application.application_date }}</p>
+<p class="form-subtitle">
+Monitor your application, receive updates, and manage your training journey with KARO.
+</p>
 
-                {% if application.admin_message %}
-                    <p><strong>Admin Message:</strong> {{ application.admin_message }}</p>
-                {% endif %}
+{% if application %}
 
-                <p>You have already submitted an application. You cannot submit another application at this time.</p>
+    {% if application.status == "Approved" %}
+    <div class="congrats-card">
+        <div class="congrats-icon">🎉</div>
 
-                {% if application.status == "Approved" %}
-                    <div class="success-actions single-action">
-                        {% if successful_payment %}
-                            <a href="{% url 'payment_receipt' successful_payment.id %}" class="submit-btn">
-                                View Receipt
-                            </a>
-                        {% else %}
-                            <a href="{% url 'initialize_payment' application.id %}" class="submit-btn">
-                                Pay Now
-                            </a>
-                        {% endif %}
-                    </div>
-                {% endif %}
-            </div>
-        {% else %}
-            <div class="status-box pending">
-                <h3>No Application Yet</h3>
-                <p>You have not submitted a training application yet.</p>
-            </div>
+        <h2>Application Approved</h2>
+
+        <p>
+            Congratulations! Your application has been approved for
+            <strong>{{ application.program }}</strong>.
+        </p>
+
+        <p>
+            Complete your payment to secure your admission into the programme.
+        </p>
+
+        {% if application.admin_message %}
+            <p><strong>Admin Message:</strong> {{ application.admin_message }}</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="status-box {{ application.status|lower }}">
+
+        <h3>{{ application.status }}</h3>
+
+        <p><strong>Program:</strong> {{ application.program }}</p>
+
+        <p><strong>Duration:</strong> {{ application.duration }}</p>
+
+        <p><strong>Submitted:</strong> {{ application.application_date }}</p>
+
+        {% if application.admin_message %}
+            <p><strong>Admin Message:</strong> {{ application.admin_message }}</p>
         {% endif %}
 
-        <div class="why-grid dashboard-actions">
-            {% if not application %}
-                <a href="/apply/" class="program-card">Submit Application</a>
+        {% if application.status == "Pending" %}
+
+            <p>
+                Your application has been submitted successfully and is awaiting review.
+            </p>
+
+        {% elif application.status == "Rejected" %}
+
+            <p>
+                Unfortunately, your application was not approved.
+            </p>
+
+        {% elif application.status == "Approved" %}
+
+            {% if successful_payment %}
+
+                <div class="status-box approved">
+
+                    <h3>✅ Payment Confirmed</h3>
+
+                    <p>Your payment has been received successfully.</p>
+
+                    <p>
+                        Thank you for choosing KARO Skill Development Programme.
+                    </p>
+
+                    <div class="success-actions single-action">
+                        <a href="{% url 'payment_receipt' successful_payment.id %}" class="submit-btn">
+                            View Receipt
+                        </a>
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <div class="success-actions single-action">
+                    <a href="{% url 'initialize_payment' application.id %}" class="submit-btn">
+                        Pay Now
+                    </a>
+                </div>
+
             {% endif %}
-            <a href="/check-status/" class="program-card">Check Application Status</a>
-            <a href="/payment-history/" class="program-card">Payment History</a>
-        </div>
-    </section>
+
+        {% endif %}
+
+    </div>
+
+{% else %}
+
+    <div class="status-box pending">
+        <h3>No Application Yet</h3>
+
+        <p>
+            You haven't submitted an application yet.
+        </p>
+    </div>
+
+{% endif %}
+
+<div class="why-grid dashboard-actions">
+
+    {% if not application %}
+
+        <a href="/apply/" class="program-card">
+            <h3>📝 Submit Application</h3>
+            <p>Apply for a KARO training programme.</p>
+        </a>
+
+    {% else %}
+
+        <a href="/check-status/" class="program-card">
+            <h3>📋 Check Status</h3>
+            <p>View your current application status.</p>
+        </a>
+
+        <a href="/payment-history/" class="program-card">
+            <h3>💳 Payment History</h3>
+            <p>View your payment records and receipts.</p>
+        </a>
+
+    {% endif %}
+
+</div>
+
+</section>
+
 </main>
 
 </body>

@@ -146,6 +146,11 @@ LOGIN_REDIRECT_URL = "/student-dashboard/"
 LOGOUT_REDIRECT_URL = "/"
 
 
-PAYSTACK_SECRET_KEY = config("PAYSTACK_SECRET_KEY", default="")
 PAYSTACK_PUBLIC_KEY = config("PAYSTACK_PUBLIC_KEY", default="")
-PAYMENT_AMOUNT = config("PAYMENT_AMOUNT", default=10000, cast=int)
+PAYSTACK_SECRET_KEY = config("PAYSTACK_SECRET_KEY", default="")
+
+TRAINING_FEES = {
+    "3 months": 50000,
+    "6 months": 70000,
+    "1 year": 100000,
+}

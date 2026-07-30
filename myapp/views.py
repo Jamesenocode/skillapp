@@ -1,8 +1,10 @@
+from email.mime import application
 import uuid
 import requests
+from django.contrib.messages import get_messages
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, request
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -141,16 +143,28 @@ def register(request):
     })
 
 def student_login(request):
+    storage = get_messages(request)
+    for _ in storage:
+        pass
+
     if request.method == "POST":
         identifier = request.POST.get("email")
         password = request.POST.get("password")
 
-        user = authenticate(request, username=identifier, password=password)
+        user = authenticate(
+            request,
+            username=identifier,
+            password=password
+        )
 
         if user is None:
             try:
                 found_user = User.objects.get(email=identifier)
-                user = authenticate(request, username=found_user.username, password=password)
+                user = authenticate(
+                    request,
+                    username=found_user.username,
+                    password=password
+                )
             except User.DoesNotExist:
                 user = None
 
@@ -165,7 +179,6 @@ def student_login(request):
         return redirect("register")
 
     return render(request, "myapp/login.html")
-
 def student_logout(request):
     logout(request)
     return redirect("home")
@@ -227,6 +240,7 @@ def apply(request):
 def application_success(request):
     return render(request, "myapp/application_success.html")
 @login_required
+@login_required
 def initialize_payment(request, application_id):
     application = get_object_or_404(
         TrainingApplication,
@@ -235,6 +249,7 @@ def initialize_payment(request, application_id):
         status="Approved"
     )
 
+    # Prevent duplicate successful payments
     successful_payment = Payment.objects.filter(
         application=application,
         student=request.user,
@@ -242,14 +257,26 @@ def initialize_payment(request, application_id):
     ).first()
 
     if successful_payment:
-        return redirect("payment_receipt", payment_id=successful_payment.id)
+        return redirect(
+            "payment_receipt",
+            payment_id=successful_payment.id
+        )
 
+    # Get training fee
+    amount = settings.TRAINING_FEES.get(application.duration)
+
+    if amount is None:
+        messages.error(request, "Invalid training duration.")
+        return redirect("student_dashboard")
+
+    # Generate unique reference
     reference = f"KARO-{uuid.uuid4().hex[:12].upper()}"
 
+    # Save payment
     payment = Payment.objects.create(
         student=request.user,
         application=application,
-        amount=settings.PAYMENT_AMOUNT,
+        amount=amount,
         reference=reference,
     )
 
@@ -257,7 +284,7 @@ def initialize_payment(request, application_id):
 
     payload = {
         "email": request.user.email,
-        "amount": settings.PAYMENT_AMOUNT * 100,
+        "amount": amount * 100,  # Paystack uses kobo
         "reference": reference,
         "callback_url": callback_url,
     }
@@ -277,21 +304,38 @@ def initialize_payment(request, application_id):
 
         result = response.json()
 
-        if result.get("status"):
-            return redirect(result["data"]["authorization_url"])
+        print(response.status_code)
+        print(result)
+
+        if result.get("status") and result.get("data"):
+            return redirect(
+                result["data"]["authorization_url"]
+            )
 
         payment.status = "Failed"
-        payment.gateway_response = result.get("message", "Payment initialization failed")
+        payment.gateway_response = result.get(
+            "message",
+            "Payment initialization failed"
+        )
         payment.save()
 
-    except requests.RequestException:
+        messages.error(request, payment.gateway_response)
+
+    except requests.RequestException as e:
+        print("Paystack error:", e)
+
         payment.status = "Failed"
-        payment.gateway_response = "Unable to connect to payment gateway"
+        payment.gateway_response = (
+            "Unable to connect to Paystack"
+        )
         payment.save()
 
-    messages.error(request, "Payment could not be started. Please try again.")
+        messages.error(
+            request,
+            "Unable to connect to Paystack. Please try again."
+        )
+
     return redirect("student_dashboard")
-
 
 @login_required
 def verify_payment(request):
@@ -326,11 +370,18 @@ def verify_payment(request):
             and returned_amount == expected_amount
         ):
             payment.status = "Success"
-            payment.gateway_response = data.get("gateway_response", "Successful")
+            payment.gateway_response = data.get(
+                "gateway_response",
+                "Payment Successful"
+            )
             payment.paid_at = timezone.now()
+
         else:
             payment.status = "Failed"
-            payment.gateway_response = data.get("gateway_response", "Payment failed")
+            payment.gateway_response = data.get(
+                "gateway_response",
+                "Payment Failed"
+            )
 
         payment.save()
 
@@ -339,9 +390,10 @@ def verify_payment(request):
         payment.gateway_response = "Unable to verify payment"
         payment.save()
 
-    return redirect("payment_receipt", payment_id=payment.id)
-
-
+    return redirect(
+        "payment_receipt",
+        payment_id=payment.id
+    )
 @login_required
 def payment_receipt(request, payment_id):
     payment = get_object_or_404(
